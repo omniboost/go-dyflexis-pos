@@ -1,10 +1,10 @@
-package netsuite
+package timesheet
 
 import (
 	"net/http"
 	"net/url"
 
-	"github.com/omniboost/go-netsuite-rest/utils"
+	"github.com/omniboost/go-timesheetportal/utils"
 )
 
 func (c *Client) NewInvoicesGetRequest() InvoicesGetRequest {

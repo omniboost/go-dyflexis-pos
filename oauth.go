@@ -1,4 +1,4 @@
-package netsuite
+package timesheet
 
 import (
 	"bytes"

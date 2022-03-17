@@ -1,4 +1,4 @@
-package netsuite
+package timesheet
 
 import (
 	"bytes"
@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/omniboost/go-netsuite-rest/utils"
+	"github.com/omniboost/go-timesheetportal/utils"
 )
 
 func (c *Client) NewSuiteqlPostRequest() SuiteqlPostRequest {

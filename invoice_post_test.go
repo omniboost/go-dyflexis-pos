@@ -1,11 +1,11 @@
-package netsuite_test
+package timesheet_test
 
 import (
 	"encoding/json"
 	"log"
 	"testing"
 
-	netsuite "github.com/omniboost/go-netsuite-rest"
+	netsuite "github.com/omniboost/go-timesheetportal"
 )
 
 func TestInvoicePost(t *testing.T) {

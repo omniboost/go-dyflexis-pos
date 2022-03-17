@@ -1,4 +1,4 @@
-package netsuite
+package timesheet
 
 import (
 	"bytes"
@@ -20,7 +20,7 @@ import (
 
 const (
 	libraryVersion = "0.0.1"
-	userAgent      = "go-netsuite-rest/" + libraryVersion
+	userAgent      = "go-timesheetportal/" + libraryVersion
 	mediaType      = "application/json"
 	charset        = "utf-8"
 )

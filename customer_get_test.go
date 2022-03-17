@@ -1,4 +1,4 @@
-package netsuite_test
+package timesheet_test
 
 import (
 	"encoding/json"

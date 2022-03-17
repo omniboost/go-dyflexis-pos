@@ -1,11 +1,11 @@
-package netsuite
+package timesheet
 
 import (
 	"net/http"
 	"net/url"
 	"strconv"
 
-	"github.com/omniboost/go-netsuite-rest/utils"
+	"github.com/omniboost/go-timesheetportal/utils"
 )
 
 func (c *Client) NewCustomerGetRequest() CustomerGetRequest {

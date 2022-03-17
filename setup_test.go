@@ -1,11 +1,11 @@
-package netsuite_test
+package timesheet_test
 
 import (
 	"context"
 	"os"
 	"testing"
 
-	netsuite "github.com/omniboost/go-netsuite-rest"
+	netsuite "github.com/omniboost/go-timesheetportal"
 	"golang.org/x/oauth2"
 )
 

@@ -1,8 +1,8 @@
-package netsuite
+package timesheet
 
 import (
 	"github.com/cydev/zero"
-	"github.com/omniboost/go-netsuite-rest/omitempty"
+	"github.com/omniboost/go-timesheetportal/omitempty"
 )
 
 type JournalEntry struct {
