@@ -26,11 +26,11 @@ const (
 )
 
 var (
-	BaseURL string = "https://{{.account_id}}.suitetalk.api.netsuite.com/services/rest"
+	BaseURL string = "https://deltacapita.api.timesheetportal.com/"
 )
 
 // NewClient returns a new Exact Globe Client client
-func NewClient(httpClient *http.Client, companyID string) *Client {
+func NewClient(httpClient *http.Client) *Client {
 	if httpClient == nil {
 		httpClient = http.DefaultClient
 	}
@@ -38,7 +38,6 @@ func NewClient(httpClient *http.Client, companyID string) *Client {
 	client := &Client{}
 
 	client.SetHTTPClient(httpClient)
-	client.SetCompanyID(companyID)
 	client.SetBaseURL(BaseURL)
 	client.SetDebug(false)
 	client.SetUserAgent(userAgent)
@@ -57,8 +56,6 @@ type Client struct {
 	baseURL string
 
 	// credentials
-	companyID       string
-	contentLanguage string
 
 	// User agent for client
 	userAgent string
@@ -89,29 +86,13 @@ func (c *Client) SetDebug(debug bool) {
 	c.debug = debug
 }
 
-func (c Client) CompanyID() string {
-	return c.companyID
-}
-
-func (c *Client) SetCompanyID(companyID string) {
-	c.companyID = companyID
-}
-
-func (c Client) ContentLanguage() string {
-	return c.contentLanguage
-}
-
-func (c *Client) SetContentLanguage(contentLanguage string) {
-	c.contentLanguage = contentLanguage
-}
-
 func (c Client) BaseURL() (*url.URL, error) {
 	tmpl, err := template.New("host").Parse(c.baseURL)
 	if err != nil {
 		return &url.URL{}, err
 	}
 	buf := new(bytes.Buffer)
-	err = tmpl.Execute(buf, map[string]interface{}{"account_id": c.companyID})
+	err = tmpl.Execute(buf, map[string]interface{}{})
 	if err != nil {
 		return &url.URL{}, err
 	}
@@ -228,11 +209,6 @@ func (c *Client) NewRequest(ctx context.Context, req Request) (*http.Request, er
 	r.Header.Add("Accept", c.MediaType())
 	r.Header.Add("User-Agent", c.UserAgent())
 
-	if c.ContentLanguage() != "" {
-		r.Header.Add("Accept-Language", c.ContentLanguage())
-		r.Header.Add("Content-Language", c.ContentLanguage())
-	}
-
 	return r, nil
 }
 
@@ -289,15 +265,15 @@ func (c *Client) Do(req *http.Request, body interface{}) (*http.Response, error)
 		return httpResp, nil
 	}
 
-	errResp := &ErrorResponse{Response: httpResp}
-	err = c.Unmarshal(httpResp.Body, body, errResp)
+	// errResp := &ErrorResponse{Response: httpResp}
+	err = c.Unmarshal(httpResp.Body, body)
 	if err != nil {
 		return httpResp, err
 	}
 
-	if errResp.Error() != "" {
-		return httpResp, errResp
-	}
+	// if errResp.Error() != "" {
+	// 	return httpResp, errResp
+	// }
 
 	return httpResp, nil
 }

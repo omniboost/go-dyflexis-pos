@@ -6,8 +6,9 @@ import (
 	"testing"
 )
 
-func TestDataSetsGet(t *testing.T) {
-	req := client.NewDataSetsGetRequest()
+func TestProjects(t *testing.T) {
+	req := client.NewProjectsRequest()
+	// req.QueryParams().Account = "FLD"
 	resp, err := req.Do()
 	if err != nil {
 		t.Error(err)

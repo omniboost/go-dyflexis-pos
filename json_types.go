@@ -19,10 +19,6 @@ func (d Date) IsEmpty() bool {
 	return d.Time.IsZero()
 }
 
-type DateTime struct {
-	time.Time
-}
-
 func (d *Date) MarshalJSON() ([]byte, error) {
 	if d.Time.IsZero() {
 		return json.Marshal(nil)
@@ -67,11 +63,19 @@ func (d *Date) UnmarshalJSON(text []byte) (err error) {
 	return err
 }
 
-func (d DateTime) MarshalSchema() string {
+type Time struct {
+	time.Time
+}
+
+func (t Time) IsEmpty() bool {
+	return t.Time.IsZero()
+}
+
+func (d Time) MarshalSchema() string {
 	return d.Time.Format(time.RFC3339)
 }
 
-func (dt *DateTime) MarshalJSON() ([]byte, error) {
+func (dt *Time) MarshalJSON() ([]byte, error) {
 	if dt.Time.IsZero() {
 		return json.Marshal(nil)
 	}
@@ -79,7 +83,7 @@ func (dt *DateTime) MarshalJSON() ([]byte, error) {
 	return json.Marshal(dt.Time.Format("2006-01-02T15:04:05"))
 }
 
-func (dt *DateTime) UnmarshalJSON(text []byte) (err error) {
+func (dt *Time) UnmarshalJSON(text []byte) (err error) {
 	var value string
 	err = json.Unmarshal(text, &value)
 	if err != nil {

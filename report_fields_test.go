@@ -6,10 +6,9 @@ import (
 	"testing"
 )
 
-func TestJournalEntryLinesGet(t *testing.T) {
-	req := client.NewJournalEntryLinesGetRequest()
-	req.PathParams().ID = 2248
-	// req.QueryParams().Fields = netsuite.Fields{"line"}
+func TestReportFields(t *testing.T) {
+	req := client.NewReportFieldsRequest()
+	// req.QueryParams().Account = "FLD"
 	resp, err := req.Do()
 	if err != nil {
 		t.Error(err)

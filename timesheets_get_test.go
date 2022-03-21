@@ -6,9 +6,9 @@ import (
 	"testing"
 )
 
-func TestAccountGet(t *testing.T) {
-	req := client.NewAccountGetRequest()
-	// req.QueryParams().Account = "FLD"
+func TestTimesheetsGet(t *testing.T) {
+	req := client.NewTimesheetsGetRequest()
+	req.QueryParams().TimesheetID = 20785
 	resp, err := req.Do()
 	if err != nil {
 		t.Error(err)
