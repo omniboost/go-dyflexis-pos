@@ -1,4 +1,4 @@
-package timesheet_test
+package dyflexis_test
 
 import (
 	"encoding/json"
@@ -25,10 +25,10 @@ func TestBuiltinReport(t *testing.T) {
 		"EmployeeEmailAddress",
 	}
 	req.RequestBody().ReportFormat = "KeyValuePairsArray"
-	req.RequestBody().StartDate.Time = time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)
-	req.RequestBody().EndDate.Time = time.Date(2022, 4, 1, 0, 0, 0, 0, time.UTC)
+	req.RequestBody().StartDate.Time = time.Date(2022, 3, 14, 0, 0, 0, 0, time.UTC)
+	req.RequestBody().EndDate.Time = time.Date(2022, 3, 20, 0, 0, 0, 0, time.UTC)
 	req.RequestBody().TimesheetStatusFilters = []string{
-		"All",
+		"Approved",
 	}
 	req.RequestBody().PageIndex = 0
 	resp, err := req.Do()

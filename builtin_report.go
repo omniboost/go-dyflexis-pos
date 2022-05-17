@@ -1,12 +1,12 @@
-package timesheet
+package dyflexis
 
 import (
 	"net/http"
 	"net/url"
 
 	"github.com/cydev/zero"
-	"github.com/omniboost/go-timesheetportal/omitempty"
-	"github.com/omniboost/go-timesheetportal/utils"
+	"github.com/omniboost/go-dyflexis/omitempty"
+	"github.com/omniboost/go-dyflexis/utils"
 )
 
 func (c *Client) NewBuiltinReportRequest() BuiltinReportRequest {

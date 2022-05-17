@@ -1,4 +1,4 @@
-package timesheet
+package dyflexis
 
 import (
 	"golang.org/x/oauth2"

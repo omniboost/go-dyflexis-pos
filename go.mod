@@ -1,4 +1,4 @@
-module github.com/omniboost/go-timesheetportal
+module github.com/omniboost/go-dyflexis
 
 go 1.16
 

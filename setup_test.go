@@ -1,16 +1,16 @@
-package timesheet_test
+package dyflexis_test
 
 import (
 	"context"
 	"os"
 	"testing"
 
-	netsuite "github.com/omniboost/go-timesheetportal"
+	timesheetportal "github.com/omniboost/go-dyflexis"
 	"golang.org/x/oauth2"
 )
 
 var (
-	client *netsuite.Client
+	client *timesheetportal.Client
 )
 
 func TestMain(m *testing.M) {
@@ -19,7 +19,7 @@ func TestMain(m *testing.M) {
 	refreshToken := os.Getenv("REFRESH_TOKEN")
 	debug := os.Getenv("DEBUG")
 
-	oauthConfig := netsuite.NewOauth2Config()
+	oauthConfig := timesheetportal.NewOauth2Config()
 	oauthConfig.ClientID = clientID
 	oauthConfig.ClientSecret = clientSecret
 
@@ -30,7 +30,7 @@ func TestMain(m *testing.M) {
 	// get http client with automatic oauth logic
 	httpClient := oauthConfig.Client(context.Background(), token)
 
-	client = netsuite.NewClient(httpClient)
+	client = timesheetportal.NewClient(httpClient)
 	if debug != "" {
 		client.SetDebug(true)
 	}

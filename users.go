@@ -1,10 +1,10 @@
-package timesheet
+package dyflexis
 
 import (
 	"net/http"
 	"net/url"
 
-	"github.com/omniboost/go-timesheetportal/utils"
+	"github.com/omniboost/go-dyflexis/utils"
 )
 
 func (c *Client) NewUsersGetRequest() UsersGetRequest {

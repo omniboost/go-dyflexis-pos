@@ -1,12 +1,12 @@
-package timesheet
+package dyflexis
 
 import (
 	"net/http"
 	"net/url"
 
 	"github.com/cydev/zero"
-	"github.com/omniboost/go-timesheetportal/omitempty"
-	"github.com/omniboost/go-timesheetportal/utils"
+	"github.com/omniboost/go-dyflexis/omitempty"
+	"github.com/omniboost/go-dyflexis/utils"
 )
 
 func (c *Client) NewCustomReportRequest() CustomReportRequest {
@@ -92,37 +92,7 @@ func (r CustomReportRequest) NewRequestBody() CustomReportRequestBody {
 	return CustomReportRequestBody{}
 }
 
-type CustomReportRequestBody struct {
-	UseIsoDateFormat                     bool     `json:"UseIsoDateFormat,omitempty"`
-	StartDate                            Time     `json:"StartDate,omitempty"`
-	EndDate                              Time     `json:"EndDate,omitempty"`
-	ReportTimeGrouping                   string   `json:"ReportTimeGrouping,omitempty"`
-	ReportFields                         []string `json:"ReportFields,omitempty"`
-	ClientFilter                         string   `json:"ClientFilter,omitempty"`
-	CostCentreFilter                     string   `json:"CostCentreFilter,omitempty"`
-	EmployeeGroupFilter                  string   `json:"EmployeeGroupFilter,omitempty"`
-	ChargeCodeGroupFilter                string   `json:"ChargeCodeGroupFilter,omitempty"`
-	ChargeCodeGroupFilterMultiple        []string `json:"ChargeCodeGroupFilterMultiple,omitempty"`
-	ChargeCodeGroupCategoryFilter        string   `json:"ChargeCodeGroupCategoryFilter,omitempty"`
-	TaskCodeFilter                       string   `json:"TaskCodeFilter,omitempty"`
-	ModifiedAfterDate                    Time     `json:"ModifiedAfterDate,omitempty"`
-	ModifiedAfterTimesheetSequenceNumber int      `json:"ModifiedAfterTimesheetSequenceNumber,omitempty"`
-	ModifiedAfterExpenseSequenceNumber   int      `json:"ModifiedAfterExpenseSequenceNumber,omitempty"`
-	TimesheetStatusFilters               []string `json:"TimesheetStatusFilters,omitempty"`
-	ExpenseStatusFilters                 []string `json:"ExpenseStatusFilters,omitempty"`
-	ReportFieldGroupings                 []string `json:"ReportFieldGroupings,omitempty"`
-	ApprovedDateFilterStart              Time     `json:"ApprovedDateFilterStart,omitempty"`
-	ApprovedDateFilterEnd                Time     `json:"ApprovedDateFilterEnd,omitempty"`
-	InvoicedStatusFilter                 string   `json:"InvoicedStatusFilter,omitempty"`
-	BillableStatusFilter                 string   `json:"BillableStatusFilter,omitempty"`
-	ProductiveStatusFilter               string   `json:"ProductiveStatusFilter,omitempty"`
-	BuiltInReportType                    string   `json:"BuiltInReportType,omitempty"`
-	TimesheetStatusFrequency             string   `json:"TimesheetStatusFrequency,omitempty"`
-	ExportedDateFilterStart              Time     `json:"ExportedDateFilterStart,omitempty"`
-	ExportedDateFilterEnd                Time     `json:"ExportedDateFilterEnd,omitempty"`
-	PageIndex                            int      `json:"PageIndex,omitempty"`
-	ReportFormat                         string   `json:"ReportFormat,omitempty"`
-}
+type CustomReportRequestBody struct{}
 
 func (r CustomReportRequestBody) MarshalJSON() ([]byte, error) {
 	return omitempty.MarshalJSON(r)
@@ -148,7 +118,7 @@ func (r *CustomReportRequest) NewResponseBody() *CustomReportResponseBody {
 	return &CustomReportResponseBody{}
 }
 
-type CustomReportResponseBody struct{}
+type CustomReportResponseBody []map[string]interface{}
 
 func (r *CustomReportRequest) URL() (*url.URL, error) {
 	u, err := r.client.GetEndpointURL("/reports/customreport", r.PathParams())

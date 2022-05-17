@@ -1,4 +1,4 @@
-package timesheet_test
+package dyflexis_test
 
 import (
 	"encoding/json"
@@ -8,7 +8,7 @@ import (
 
 func TestTimesheetsGet(t *testing.T) {
 	req := client.NewTimesheetsGetRequest()
-	req.QueryParams().TimesheetID = 20785
+	req.QueryParams().TimesheetID = 21847
 	resp, err := req.Do()
 	if err != nil {
 		t.Error(err)

@@ -1,4 +1,4 @@
-package timesheet_test
+package dyflexis_test
 
 import (
 	"encoding/json"

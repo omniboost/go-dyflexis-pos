@@ -1,4 +1,4 @@
-package timesheet
+package dyflexis
 
 import (
 	"bytes"
@@ -20,7 +20,7 @@ import (
 
 const (
 	libraryVersion = "0.0.1"
-	userAgent      = "go-timesheetportal/" + libraryVersion
+	userAgent      = "go-dyflexis/" + libraryVersion
 	mediaType      = "application/json"
 	charset        = "utf-8"
 )
