@@ -1,12 +1,10 @@
 package dyflexis_test
 
 import (
-	"context"
 	"os"
 	"testing"
 
-	timesheetportal "github.com/omniboost/go-dyflexis"
-	"golang.org/x/oauth2"
+	dyflexis "github.com/omniboost/go-dyflexis"
 )
 
 var (
@@ -14,26 +12,17 @@ var (
 )
 
 func TestMain(m *testing.M) {
-	clientID := os.Getenv("CLIENT_ID")
-	clientSecret := os.Getenv("CLIENT_SECRET")
-	refreshToken := os.Getenv("REFRESH_TOKEN")
 	debug := os.Getenv("DEBUG")
+	posClientID := os.Getenv("POS_CLIENT_ID")
+	posToken := os.Getenv("POS_TOKEN")
 
-	oauthConfig := timesheetportal.NewOauth2Config()
-	oauthConfig.ClientID = clientID
-	oauthConfig.ClientSecret = clientSecret
-
-	token := &oauth2.Token{
-		RefreshToken: refreshToken,
-	}
-
-	// get http client with automatic oauth logic
-	httpClient := oauthConfig.Client(context.Background(), token)
-
-	client = timesheetportal.NewClient(httpClient)
+	client = dyflexis.NewClient(nil)
 	if debug != "" {
 		client.SetDebug(true)
 	}
+
+	client.SetPOSClientID(posClientID)
+	client.SetPOSToken(posToken)
 
 	client.SetDisallowUnknownFields(true)
 	m.Run()

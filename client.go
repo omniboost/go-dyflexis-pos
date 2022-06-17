@@ -3,6 +3,7 @@ package dyflexis
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -26,7 +27,7 @@ const (
 )
 
 var (
-	BaseURL string = "https://deltacapita.api.timesheetportal.com/"
+	BaseURL string = "https://pos.planning.nu"
 )
 
 // NewClient returns a new Exact Globe Client client
@@ -56,6 +57,8 @@ type Client struct {
 	baseURL string
 
 	// credentials
+	posClientID string
+	posToken    string
 
 	// User agent for client
 	userAgent string
@@ -84,6 +87,22 @@ func (c Client) Debug() bool {
 
 func (c *Client) SetDebug(debug bool) {
 	c.debug = debug
+}
+
+func (c Client) POSClientID() string {
+	return c.posClientID
+}
+
+func (c *Client) SetPOSClientID(posClientID string) {
+	c.posClientID = posClientID
+}
+
+func (c Client) POSToken() string {
+	return c.posToken
+}
+
+func (c *Client) SetPOSToken(posToken string) {
+	c.posToken = posToken
 }
 
 func (c Client) BaseURL() (*url.URL, error) {
@@ -208,6 +227,7 @@ func (c *Client) NewRequest(ctx context.Context, req Request) (*http.Request, er
 	r.Header.Add("Content-Type", fmt.Sprintf("%s; charset=%s", c.MediaType(), c.Charset()))
 	r.Header.Add("Accept", c.MediaType())
 	r.Header.Add("User-Agent", c.UserAgent())
+	r.Header.Add("Authorization", fmt.Sprintf("DyflexisPOS %s", base64.URLEncoding.EncodeToString([]byte(c.POSClientID()+" "+c.POSToken()))))
 
 	return r, nil
 }
@@ -266,10 +286,10 @@ func (c *Client) Do(req *http.Request, body interface{}) (*http.Response, error)
 	}
 
 	// errResp := &ErrorResponse{Response: httpResp}
-	err = c.Unmarshal(httpResp.Body, body)
-	if err != nil {
-		return httpResp, err
-	}
+	// err = c.Unmarshal(httpResp.Body, body)
+	// if err != nil {
+	// 	return httpResp, err
+	// }
 
 	// if errResp.Error() != "" {
 	// 	return httpResp, errResp
