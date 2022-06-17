@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/omniboost/go-dyflexis/utils"
+	"github.com/omniboost/go-dyflexis-pos/utils"
 )
 
 func (c *Client) NewDyflexisPOSPostRequest() DyflexisPOSPostRequest {

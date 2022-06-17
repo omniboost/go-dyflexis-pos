@@ -21,7 +21,7 @@ import (
 
 const (
 	libraryVersion = "0.0.1"
-	userAgent      = "go-dyflexis/" + libraryVersion
+	userAgent      = "go-dyflexis-pos/" + libraryVersion
 	mediaType      = "application/json"
 	charset        = "utf-8"
 )

@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	dyflexis "github.com/omniboost/go-dyflexis"
+	dyflexis "github.com/omniboost/go-dyflexis-pos"
 )
 
 var (
