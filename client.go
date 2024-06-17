@@ -27,7 +27,8 @@ const (
 )
 
 var (
-	BaseURL string = "https://pos.planning.nu"
+	BaseURL         string = "https://pos.planning.nu"
+	BasePOSProtocol string = "DyflexisPOS"
 )
 
 // NewClient returns a new Exact Globe Client client
@@ -44,6 +45,7 @@ func NewClient(httpClient *http.Client) *Client {
 	client.SetUserAgent(userAgent)
 	client.SetMediaType(mediaType)
 	client.SetCharset(charset)
+	client.SetPOSProtocol(BasePOSProtocol)
 
 	return client
 }
@@ -57,6 +59,7 @@ type Client struct {
 	baseURL string
 
 	// credentials
+	posProtocol string
 	posClientID string
 	posToken    string
 
@@ -87,6 +90,14 @@ func (c Client) Debug() bool {
 
 func (c *Client) SetDebug(debug bool) {
 	c.debug = debug
+}
+
+func (c Client) POSProtocol() string {
+	return c.posProtocol
+}
+
+func (c *Client) SetPOSProtocol(posProtocol string) {
+	c.posProtocol = posProtocol
 }
 
 func (c Client) POSClientID() string {
@@ -227,7 +238,7 @@ func (c *Client) NewRequest(ctx context.Context, req Request) (*http.Request, er
 	r.Header.Add("Content-Type", fmt.Sprintf("%s; charset=%s", c.MediaType(), c.Charset()))
 	r.Header.Add("Accept", c.MediaType())
 	r.Header.Add("User-Agent", c.UserAgent())
-	r.Header.Add("Authorization", fmt.Sprintf("DyflexisPOS %s", base64.URLEncoding.EncodeToString([]byte(c.POSClientID()+" "+c.POSToken()))))
+	r.Header.Add("Authorization", fmt.Sprintf("%s %s", c.POSProtocol(), base64.URLEncoding.EncodeToString([]byte(c.POSClientID()+" "+c.POSToken()))))
 
 	return r, nil
 }
