@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	client *timesheetportal.Client
+	client *dyflexis.Client
 )
 
 func TestMain(m *testing.M) {

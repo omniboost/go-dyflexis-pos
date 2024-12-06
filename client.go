@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -292,6 +291,21 @@ func (c *Client) Do(req *http.Request, body interface{}) (*http.Response, error)
 		return httpResp, err
 	}
 
+	errorResponse := &ErrorResponse{Response: httpResp}
+	statusErrResponse := &StatusErrorResponse{Response: httpResp}
+	err = c.Unmarshal(httpResp.Body, []any{}, []any{body, errorResponse, statusErrResponse})
+	if err != nil {
+		return httpResp, err
+	}
+
+	if len(errorResponse.Messages) > 0 {
+		return httpResp, errorResponse
+	}
+
+	if statusErrResponse.Error() != "" {
+		return httpResp, statusErrResponse
+	}
+
 	if httpResp.ContentLength == 0 {
 		return httpResp, nil
 	}
@@ -309,38 +323,31 @@ func (c *Client) Do(req *http.Request, body interface{}) (*http.Response, error)
 	return httpResp, nil
 }
 
-func (c *Client) Unmarshal(r io.Reader, vv ...interface{}) error {
-	if len(vv) == 0 {
+func (c *Client) Unmarshal(r io.Reader, vv []interface{}, optionalVv []interface{}) error {
+	if len(vv) == 0 && len(optionalVv) == 0 {
 		return nil
 	}
 
-	b, err := ioutil.ReadAll(r)
+	b, err := io.ReadAll(r)
 	if err != nil {
 		return err
 	}
 
-	errs := []error{}
 	for _, v := range vv {
 		r := bytes.NewReader(b)
 		dec := json.NewDecoder(r)
-		if c.disallowUnknownFields {
-			dec.DisallowUnknownFields()
-		}
 
 		err := dec.Decode(v)
 		if err != nil && err != io.EOF {
-			errs = append(errs, err)
+			return err
 		}
-
 	}
 
-	if len(errs) == len(vv) {
-		// Everything errored
-		msgs := make([]string, len(errs))
-		for i, e := range errs {
-			msgs[i] = fmt.Sprint(e)
-		}
-		return errors.New(strings.Join(msgs, ", "))
+	for _, v := range optionalVv {
+		r := bytes.NewReader(b)
+		dec := json.NewDecoder(r)
+
+		_ = dec.Decode(v)
 	}
 
 	return nil
@@ -364,84 +371,59 @@ func CheckResponse(r *http.Response) error {
 		return nil
 	}
 
+	err := checkContentType(r)
+	if err != nil {
+		return errors.New(r.Status)
+	}
+
 	// read data and copy it back
-	data, err := ioutil.ReadAll(r.Body)
-	r.Body = ioutil.NopCloser(bytes.NewReader(data))
+	data, err := io.ReadAll(r.Body)
+	r.Body = io.NopCloser(bytes.NewReader(data))
 	if err != nil {
 		return errorResponse
 	}
 
-	err = checkContentType(r)
-	if err != nil {
-		return errors.WithStack(err)
-	}
-
-	if r.ContentLength == 0 {
-		return errors.New("response body is empty")
+	if len(data) == 0 {
+		return nil
 	}
 
 	// convert json to struct
-	if len(data) != 0 {
-		err = json.Unmarshal(data, &errorResponse)
-		if err != nil {
-			return errors.WithStack(err)
-		}
+	err = json.Unmarshal(data, errorResponse)
+	if err != nil {
+		return err
 	}
 
-	if errorResponse.Error() != "" {
-		return errorResponse
-	}
-
-	return nil
+	return errorResponse
 }
 
-// {
-//   "type": "https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.4",
-//   "title": "Forbidden",
-//   "status": 403,
-//   "o:errorDetails": [
-//     {
-//       "detail": "The account record is only available as a beta record. Enable the REST Record Service (Beta) feature in Setup > Company > Enable Features to work with this record.",
-//       "o:errorCode": "INSUFFICIENT_PERMISSION"
-//     }
-//   ]
-// }
+type StatusErrorResponse struct {
+	// HTTP response that caused this error
+	Response *http.Response
+}
+
+func (r *StatusErrorResponse) Error() string {
+	if r.Response.StatusCode != 0 && (r.Response.StatusCode < 200 || r.Response.StatusCode > 299) {
+		return fmt.Sprintf("%s", r.Response.Status)
+	}
+
+	return ""
+}
 
 type ErrorResponse struct {
 	// HTTP response that caused this error
-	Response *http.Response
+	Response *http.Response `json:"-"`
 
-	Type         string       `json:"type"`
-	Title        interface{}  `json:"title"`
-	Status       int          `json:"status"`
-	ErrorDetails ErrorDetails `json:"o:errorDetails"`
+	Messages []string `json:"messages"`
 }
 
 func (r *ErrorResponse) Error() string {
-	errors := []string{}
-
-	for _, d := range r.ErrorDetails {
-		err := d.Error()
-		if err != "" {
-			errors = append(errors, err)
-		}
-	}
-
-	return strings.Join(errors, "\r\n")
+	return strings.Join(r.Messages, ", ")
 }
 
-type ErrorDetails []ErrorDetail
-
-type ErrorDetail struct {
-	Detail    string `json:"detail"`
-	ErrorCode string `json:"o:errorCode"`
-}
-
-func (d *ErrorDetail) Error() string {
-	if d.ErrorCode != "" {
-		return fmt.Sprintf("%s: %s", d.ErrorCode, d.Detail)
-	}
-	return ""
+type Message struct {
+	MessageCode string `json:"message_code"`
+	MessageType string `json:"message_type"`
+	Message     string `json:"message"`
 }
 
 func checkContentType(response *http.Response) error {
